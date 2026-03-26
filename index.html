@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d4a64a">
+<link rel="manifest" href="manifest.json">
+<title>JT Contractor App</title>
+<style>
+:root{
+  --bg:#0d0d0d; --panel:#171717; --panel2:#101010; --line:#3b2f18; --gold:#d4a64a; --text:#f5f2ea; --muted:#cfc7b5;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#090909,#121212 30%,#0f0f0f);color:var(--text)}
+.container{max-width:1500px;margin:auto;padding:16px}
+.card{background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
+.header{text-align:center}
+.logo{width:110px;height:110px;border-radius:50%;display:block;margin:0 auto 10px;border:2px solid var(--gold)}
+h1{margin:0;font-size:34px} h2{margin:0 0 14px;color:var(--gold);font-size:22px} h3{margin:0 0 10px;color:var(--gold);font-size:18px}
+.small{font-size:12px;color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(14,1fr);gap:8px;margin:16px 0}
+.tab-btn{background:#161616;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px 10px;font-weight:700;cursor:pointer}
+.tab-btn.active{background:rgba(212,166,74,.15);color:var(--gold)}
+.pane{display:none}.pane.active{display:block}
+.grid{display:grid;gap:16px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}
+label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 6px;font-weight:700}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #574321;background:#fff;color:#111;font-size:15px}
+textarea{min-height:90px;resize:vertical}
+.btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button,.linkbtn{padding:12px 16px;border:none;border-radius:12px;cursor:pointer;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.primary{background:var(--gold);color:#111}.secondary{background:transparent;color:var(--gold);border:1px solid #6b5322}.danger{background:#341515;color:#ffd6d6;border:1px solid #7c2e2e}
+.list{display:grid;gap:10px}.item{border:1px solid #2b2b2b;background:var(--panel);border-radius:16px;padding:12px 14px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.summary{display:grid;gap:10px}.summary .item{display:flex;justify-content:space-between;align-items:center}
+.amount{font-weight:800;color:var(--gold)}
+.photo-grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)} .photo-grid img{width:100%;height:180px;object-fit:cover;border-radius:10px;border:1px solid #333}
+.notice{background:rgba(212,166,74,.08);border:1px solid #6b5322;color:#f5e6bf;border-radius:14px;padding:12px;margin-bottom:12px}
+.calendar-wrap{border:1px solid #2b2b2b;background:var(--panel);border-radius:16px;padding:12px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-dow,.cal-day{text-align:center;padding:10px;border-radius:10px}
+.cal-dow{font-size:12px;color:var(--muted);font-weight:700;background:var(--panel2)}
+.cal-day{background:var(--panel2);min-height:72px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:8px;border:1px solid #242424}
+.cal-day.muted{opacity:.35}.cal-day.today{border-color:var(--gold)}.cal-day.has-event{background:rgba(212,166,74,.10);border-color:#6b5322}
+.cal-num{font-weight:700;font-size:13px}.cal-dot{margin-top:6px;font-size:11px;color:var(--gold);text-align:left;line-height:1.2}
+@media (max-width:1200px){.tabs{grid-template-columns:repeat(7,1fr)}}
+@media (max-width:800px){.tabs,.two,.three,.four,.photo-grid{grid-template-columns:1fr} h1{font-size:28px} .cal-day{min-height:58px;padding:6px}}
+
+.fin-grid{display:grid;gap:14px;grid-template-columns:repeat(3,1fr);margin-top:14px}
+.fin-card{border:1px solid #2b2b2b;background:var(--panel);border-radius:18px;padding:14px 16px}
+.fin-title{font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.06em}
+.fin-value{font-size:26px;font-weight:900;margin-top:6px;color:var(--gold)}
+.fin-sub{font-size:12px;color:var(--muted);margin-top:6px}
+.rank-list{display:grid;gap:10px;margin-top:14px}
+.rank-item{border:1px solid #2b2b2b;background:var(--panel);border-radius:16px;padding:12px 14px}
+.rank-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+@media (max-width:1200px){.fin-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:800px){.fin-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card header">
+    <img class="logo" src="x" alt="JT Logo">
+    <h1>Josh Thomson Renovation Specialist</h1>
+    <div class="small">Renovation Specialist · (250) 575-3692</div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+
+  
+
+<section id="dashboard" class="pane active">
+  <div class="grid two">
+    <div class="card">
+      <h2>Business Overview</h2>
+      <div class="summary">
+        <div class="item"><span>Projects</span><strong class="amount" id="dashProjects">0</strong></div>
+        <div class="item"><span>Customers</span><strong class="amount" id="dashCustomers">0</strong></div>
+        <div class="item"><span>Materials</span><strong class="amount" id="dashMaterials">0</strong></div>
+        <div class="item"><span>Receipts Total</span><strong class="amount" id="dashReceipts">$0.00</strong></div>
+        <div class="item"><span>Vehicle KM Total</span><strong class="amount" id="dashKm">0.0</strong></div>
+        <div class="item"><span>Payroll Entries</span><strong class="amount" id="dashPayroll">0</strong></div>
+      </div>
+
+      <div class="fin-grid">
+        <div class="fin-card">
+          <div class="fin-title">This Month Receipts</div>
+          <div class="fin-value" id="receiptMonthTotal">$0.00</div>
+          <div class="fin-sub">Material purchase receipts logged this month</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Last Month Receipts</div>
+          <div class="fin-value" id="receiptLastMonthTotal">$0.00</div>
+          <div class="fin-sub">Compare monthly spend trend</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">This Month KM</div>
+          <div class="fin-value" id="kmMonthTotal">0.0</div>
+          <div class="fin-sub">Company vehicle kilometres this month</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Last Month KM</div>
+          <div class="fin-value" id="kmLastMonthTotal">0.0</div>
+          <div class="fin-sub">Last month vehicle usage</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Estimated Fuel Cost</div>
+          <div class="fin-value" id="fuelEstimate">$0.00</div>
+          <div class="fin-sub">Based on this month's KM × rate</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Average Cost / Sq Ft</div>
+          <div class="fin-value" id="avgCostSqFt">$0.00</div>
+          <div class="fin-sub">Across projects with usable cost + sqft data</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Current Project Snapshot</h2>
+      <div class="summary">
+        <div class="item"><span>Project</span><strong id="snapProject">New Project</strong></div>
+        <div class="item"><span>Status</span><strong id="snapStatus">Quote</strong></div>
+        <div class="item"><span>Estimate Total</span><strong class="amount" id="snapEstimate">$0.00</strong></div>
+        <div class="item"><span>Total Job Cost</span><strong class="amount" id="snapCost">$0.00</strong></div>
+        <div class="item"><span>Gross Profit</span><strong class="amount" id="snapProfit">$0.00</strong></div>
+      </div>
+
+      <div class="fin-grid" style="margin-top:18px">
+        <div class="fin-card">
+          <div class="fin-title">Current Project Revenue</div>
+          <div class="fin-value" id="pmRevenue">$0.00</div>
+          <div class="fin-sub">Estimate plus change orders</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Current Cost / Sq Ft</div>
+          <div class="fin-value" id="pmCostSqFt">$0.00</div>
+          <div class="fin-sub">Based on current project costs</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Current Gross Profit</div>
+          <div class="fin-value" id="pmProfit">$0.00</div>
+          <div class="fin-sub">Gross profit on current project</div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-title">Current Margin</div>
+          <div class="fin-value" id="pmMargin">0.0%</div>
+          <div class="fin-sub">Gross margin on current project</div>
+        </div>
+      </div>
+
+      <div class="rank-list">
+        <div class="rank-item">
+          <div class="rank-top"><strong>Best Project Margin</strong><span class="amount" id="bestProjectMargin">-</span></div>
+          <div class="small muted" id="bestProjectName">No data yet</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-top"><strong>Worst Project Margin</strong><span class="amount" id="worstProjectMargin">-</span></div>
+          <div class="small muted" id="worstProjectName">No data yet</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-top"><strong>Top Project By Profit</strong><span class="amount" id="topProfitValue">-</span></div>
+          <div class="small muted" id="topProfitName">No data yet</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-top"><strong>Average Revenue / Project</strong><span class="amount" id="avgRevenueProject">$0.00</span></div>
+          <div class="small muted">Across projects with revenue data</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-top"><strong>Highest Receipt Category</strong><span class="amount" id="topCategoryValue">$0.00</span></div>
+          <div class="small muted" id="topCategoryName">No category data yet</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-top"><strong>Most Used Vehicle</strong><span class="amount" id="topVehicleValue">0.0 km</span></div>
+          <div class="small muted" id="topVehicleName">No vehicle data yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+  <section id="projects" class="pane"><div class="grid two">
+    <div class="card">
+      <h2>Project Manager</h2>
+      <label>Project Name</label><input id="projectName">
+      <label>Status</label><select id="projectStatus"><option>Quote</option><option>Active</option><option>Completed</option><option>On Hold</option></select>
+      <label>Linked Customer</label><select id="linkedCustomer"></select>
+      <label>Client Name</label><input id="clientName">
+      <label>Phone</label><input id="phone">
+      <label>Email</label><input id="email">
+      <label>Address</label><input id="address">
+      <div class="btnbar">
+        <button class="primary" id="newProjectBtn">New Project</button>
+        <button class="secondary" id="saveProjectBtn">Save Project</button>
+        <button class="secondary" id="duplicateProjectBtn">Duplicate Project</button>
+        <button class="danger" id="deleteProjectBtn">Delete Project</button>
+      </div>
+      <div class="small" id="projectMsg"></div>
+    </div>
+    <div class="card"><h2>Saved Projects</h2><div id="projectList" class="list"></div></div>
+  </div></section>
+
+  <section id="customers" class="pane"><div class="grid two">
+    <div class="card">
+      <h2>Customers</h2>
+      <label>Name</label><input id="custName">
+      <label>Phone</label><input id="custPhone">
+      <label>Email</label><input id="custEmail">
+      <label>Address</label><input id="custAddress">
+      <label>Notes</label><textarea id="custNotes"></textarea>
+      <div class="btnbar"><button class="primary" id="addCustomerBtn">Save Customer</button></div>
+      <div class="small" id="customerMsg"></div>
+    </div>
+    <div class="card"><h2>Customer List</h2><div id="customerList" class="list"></div></div>
+  </div></section>
+
+  <section id="materials" class="pane"><div class="grid two">
+    <div class="card">
+      <h2>Materials</h2>
+      <div class="grid three">
+        <div><label>Material</label><input id="materialName"></div>
+        <div><label>Unit</label><input id="materialUnit"></div>
+        <div><label>Unit Price</label><input id="materialPrice" type="number" step="0.01"></div>
+      </div>
+      <div class="btnbar"><button class="primary" id="addMaterialBtn">Save Material</button></div>
+      <div class="notice" style="margin-top:14px">Quick add material cost to the current project.</div>
+      <div class="grid three">
+        <div><label>Saved Material</label><select id="projectMaterialSelect"></select></div>
+        <div><label>Quantity</label><input id="projectMaterialQty" type="number" step="0.01"></div>
+        <div><label>Auto Cost</label><input id="projectMaterialCost" type="number" step="0.01"></div>
+      </div>
+      <div class="btnbar"><button class="secondary" id="calcMaterialBtn">Calculate</button><button class="primary" id="applyMaterialBtn">Add To Job Cost</button></div>
+      <div class="small" id="materialMsg"></div>
+    </div>
+    <div class="card"><h2>Material Library</h2><div id="materialList" class="list"></div></div>
+  </div></section>
+
+  <section id="schedule" class="pane"><div class="grid two">
+    <div class="card">
+      <h2>Schedule</h2>
+      <div class="notice">Visual calendar plus .ics export and Google Calendar links.</div>
+      <div class="grid three">
+        <div><label>Event Title</label><input id="schedTitle"></div>
+        <div><label>Date</label><input id="schedDate" type="date"></div>
+        <div><label>Time</label><input id="schedTime" type="time"></div>
+      </div>
+      <label>Notes</label><textarea id="schedNotes"></textarea>
+      <div class="btnbar">
+        <button class="primary" id="addScheduleBtn">Add Schedule Item</button>
+        <button class="secondary" id="exportScheduleBtn">Download Calendar File (.ics)</button>
+        <button class="danger" id="clearScheduleBtn">Clear Schedule</button>
+      </div>
+      <div class="small" id="scheduleMsg"></div>
+    </div>
+    <div class="card">
+      <h2>Visual Calendar</h2>
+      <div class="calendar-wrap">
+        <div class="cal-head">
+          <button class="secondary" id="prevMonthBtn">Prev</button>
+          <strong id="calendarMonthLabel">Month</strong>
+          <button class="secondary" id="nextMonthBtn">Next</button>
+        </div>
+        <div class="cal-grid" id="calendarGrid"></div>
+      </div>
+      <div id="scheduleList" class="list" style="margin-top:14px"></div>
+    </div>
+  </div></section>
+
+  <section id="quote" class="pane"><div class="grid two">
+    <div class="card"><h2>Quote Intake</h2>
+      <div class="grid three">
+        <div><label>Client Name</label><input id="qrClientName"></div>
+        <div><label>Phone</label><input id="qrPhone"></div>
+        <div><label>Email</label><input id="qrEmail"></div>
+        <div><label>Project Type</label><input id="qrProjectType"></div>
+        <div><label>Preferred Start Date</label><input id="qrStartDate" type="date"></div>
+        <div><label>Budget</label><input id="qrBudget"></div>
+      </div>
+      <label>Description</label><textarea id="qrDescription"></textarea>
+      <div class="btnbar"><button class="primary" id="copyQuoteBtn">Copy To Estimate</button></div>
+    </div>
+    <div class="card"><h2>Quote Summary</h2><div class="summary">
+      <div class="item"><span>Client</span><strong id="quoteClientOut">-</strong></div>
+      <div class="item"><span>Project Type</span><strong id="quoteTypeOut">-</strong></div>
+      <div class="item"><span>Budget</span><strong id="quoteBudgetOut">-</strong></div>
+      <div class="item"><span>Preferred Start</span><strong id="quoteDateOut">-</strong></div>
+    </div></div>
+  </div></section>
+
+  <section id="estimate" class="pane"><div class="grid two">
+    <div class="card"><h2>Estimate</h2>
+      <div class="grid three">
+        <div><label>Estimate Number</label><input id="estimateNumber"></div>
+        <div><label>Estimate Date</label><input id="estimateDate" type="date"></div>
+        <div><label>Square Footage</label><input id="squareFootage" type="number"></div>
+        <div><label>Price Per Sq Ft</label><input id="pricePerSqFt" type="number"></div>
+        <div><label>Markup / Other</label><input id="markupActual" type="number"></div>
+        <div><label>Deposit %</label><input id="depositPercent" type="number" value="10"></div>
+      </div>
+      <label>Scope / Notes</label><textarea id="scopeNotes"></textarea>
+    </div>
+    <div class="card"><h2>Estimate Totals</h2><div class="summary">
+      <div class="item"><span>Subtotal</span><strong class="amount" id="estSubtotal">$0.00</strong></div>
+      <div class="item"><span>HST</span><strong class="amount" id="estHst">$0.00</strong></div>
+      <div class="item"><span>Total</span><strong class="amount" id="estTotal">$0.00</strong></div>
+      <div class="item"><span>Deposit Amount</span><strong class="amount" id="estDeposit">$0.00</strong></div>
+    </div></div>
+  </div></section>
+
+  <section id="invoice" class="pane"><div class="grid two">
+    <div class="card"><h2>Invoice</h2>
+      <div class="grid three">
+        <div><label>Invoice Number</label><input id="invoiceNumber"></div>
+        <div><label>Invoice Date</label><input id="invoiceDate" type="date"></div>
+        <div><label>Change Orders Total</label><input id="changeOrdersTotal" type="number"></div>
+        <div><label>Deposit Received</label><input id="depositReceived" type="number"></div>
+        <div><label>Progress Payments</label><input id="progressPayments" type="number"></div>
+      </div>
+      <label>Invoice Notes</label><textarea id="invoiceNotes"></textarea>
+    </div>
+    <div class="card"><h2>Invoice Totals</h2><div class="summary">
+      <div class="item"><span>Estimate Total</span><strong class="amount" id="invEstimate">$0.00</strong></div>
+      <div class="item"><span>Adjusted Contract</span><strong class="amount" id="invAdjusted">$0.00</strong></div>
+      <div class="item"><span>Payments Received</span><strong class="amount" id="invPayments">$0.00</strong></div>
+      <div class="item"><span>Balance Remaining</span><strong class="amount" id="invBalance">$0.00</strong></div>
+    </div></div>
+  </div></section>
+
+  <section id="jobcost" class="pane"><div class="grid two">
+    <div class="card"><h2>Job Cost</h2>
+      <div class="grid three">
+        <div><label>Actual Labour Cost</label><input id="actualLabourCost" type="number"></div>
+        <div><label>Extra Labour / Burden</label><input id="extraLabourCost" type="number"></div>
+        <div><label>Actual Material Cost</label><input id="materialCostActual" type="number"></div>
+        <div><label>Actual Equipment Cost</label><input id="equipmentCostActual" type="number"></div>
+        <div><label>Actual Travel Cost</label><input id="travelCostActual" type="number"></div>
+        <div><label>Other Actual Cost</label><input id="otherJobCostActual" type="number"></div>
+      </div>
+    </div>
+    <div class="card"><h2>Cost Summary</h2><div class="summary">
+      <div class="item"><span>Total Labour</span><strong class="amount" id="costLabour">$0.00</strong></div>
+      <div class="item"><span>Total Job Cost</span><strong class="amount" id="costTotal">$0.00</strong></div>
+      <div class="item"><span>Cost / Sq Ft</span><strong class="amount" id="costSqFt">$0.00</strong></div>
+      <div class="item"><span>Gross Profit</span><strong class="amount" id="costProfit">$0.00</strong></div>
+    </div></div>
+  </div></section>
+
+  <section id="receipts" class="pane"><div class="grid two">
+    <div class="card"><h2>Receipts</h2>
+      <label>Receipt Photo</label><input id="receiptFiles" type="file" accept="image/*">
+      <div class="grid three">
+        <div><label>Store / Supplier</label><input id="receiptStore"></div>
+        <div><label>Purchase Date</label><input id="receiptDate" type="date"></div>
+        <div><label>Items Bought</label><input id="receiptItems"></div>
+        <div><label>Category</label><input id="receiptCategory"></div>
+        <div><label>Total Cost</label><input id="receiptTotal" type="number" step="0.01"></div>
+      </div>
+      <label>Notes</label><textarea id="receiptNote"></textarea>
+      <div class="btnbar">
+        <button class="primary" id="addReceiptBtn">Add Receipt</button>
+        <button class="secondary" id="applyReceiptBtn">Add To Material Cost</button>
+        <button class="danger" id="clearReceiptsBtn">Clear Receipts</button>
+      </div><div class="small" id="receiptMsg"></div>
+    </div>
+    <div class="card"><h2>Receipt Log</h2><div class="summary"><div class="item"><span>Tracked Receipt Cost</span><strong class="amount" id="receiptTotalOut">$0.00</strong></div></div><div id="receiptList" class="photo-grid"></div></div>
+  </div></section>
+
+  <section id="vehicles" class="pane"><div class="grid two">
+    <div class="card"><h2>Vehicle KM Tracker</h2>
+      <div class="grid three">
+        <div><label>Vehicle</label><input id="vehicleName"></div>
+        <div><label>Date</label><input id="vehicleDate" type="date"></div>
+        <div><label>Driver</label><input id="vehicleDriver"></div>
+        <div><label>Start Odometer</label><input id="vehicleStartKm" type="number" step="0.1"></div>
+        <div><label>End Odometer</label><input id="vehicleEndKm" type="number" step="0.1"></div>
+        <div><label>Purpose / Route</label><input id="vehiclePurpose"></div>
+      </div>
+      <div class="btnbar"><button class="primary" id="addVehicleBtn">Add KM Entry</button><button class="danger" id="clearVehicleBtn">Clear KM Log</button></div>
+      <div class="small" id="vehicleMsg"></div>
+    </div>
+    <div class="card"><h2>KM Log</h2><div class="summary"><div class="item"><span>Total KM</span><strong class="amount" id="kmTotalOut">0.0</strong></div></div><div id="vehicleList" class="list"></div></div>
+  </div></section>
+
+  <section id="photos" class="pane"><div class="grid two">
+    <div class="card"><h2>Photos</h2>
+      <label>Project Photos</label><input id="photoFiles" type="file" multiple accept="image/*">
+      <label>Caption</label><textarea id="photoCaption"></textarea>
+      <div class="btnbar"><button class="primary" id="addPhotoBtn">Add Photos</button><button class="danger" id="clearPhotosBtn">Clear Photos</button></div>
+      <div class="small" id="photoMsg"></div>
+    </div>
+    <div class="card"><h2>Photo Log</h2><div id="photoList" class="photo-grid"></div></div>
+  </div></section>
+
+  <section id="payroll" class="pane"><div class="grid two">
+    <div class="card"><h2>Employees</h2>
+      <div class="grid three">
+        <div><label>Employee Name</label><input id="empName"></div>
+        <div><label>Hourly Rate</label><input id="empRate" type="number" step="0.01"></div>
+        <div><label>Role</label><input id="empRole"></div>
+      </div>
+      <div class="btnbar"><button class="primary" id="addEmployeeBtn">Save Employee</button></div>
+      <div id="employeeList" class="list" style="margin-top:14px"></div>
+      <h3 style="margin-top:18px">Payroll Entry</h3>
+      <div class="grid four">
+        <div><label>Employee</label><select id="entryEmployee"></select></div>
+        <div><label>Date Worked</label><input id="entryDate" type="date"></div>
+        <div><label>Hours Worked</label><input id="entryHours" type="number" step="0.25"></div>
+        <div><label>Hourly Rate</label><input id="entryRate" type="number" step="0.01"></div>
+      </div>
+      <label>Notes</label><input id="entryNote">
+      <div class="btnbar"><button class="primary" id="addPayrollBtn">Add Payroll Entry</button><button class="danger" id="clearPayrollBtn">Clear Payroll</button></div>
+      <div class="small" id="payrollMsg"></div>
+    </div>
+    <div class="card"><h2>Payroll Summary</h2><div class="summary">
+      <div class="item"><span>Total Hours</span><strong class="amount" id="payHoursOut">0.00</strong></div>
+      <div class="item"><span>Gross Pay</span><strong class="amount" id="payGrossOut">$0.00</strong></div>
+    </div><div id="payrollList" class="list" style="margin-top:14px"></div></div>
+  </div></section>
+
+  <section id="reports" class="pane"><div class="grid two">
+    <div class="card">
+      <h2>Reports</h2>
+      <div class="btnbar"><button class="primary" id="openClientReportBtn">Open Client Report</button><button class="secondary" id="openInternalReportBtn">Open Internal Report</button></div>
+      <div class="small" style="margin-top:10px">Reports open in a new tab and can be printed or saved as PDF.</div>
+    </div>
+    <div class="card">
+      <h2>Backup</h2><div class="notice">Use Export Backup regularly so your data is safe even if your browser cache is cleared or you change phones.</div>
+      <div class="btnbar"><button class="primary" id="exportBackupBtn">Export Backup</button><label class="secondary" style="cursor:pointer">Import Backup<input id="importBackupInput" type="file" accept=".json" style="display:none"></label></div>
+      <div class="small" id="backupMsg"></div>
+    </div>
+  </div></section>
+</div>
+
+<script>
+const tabs = ['dashboard','projects','customers','materials','schedule','quote','estimate','invoice','jobcost','receipts','vehicles','photos','payroll','reports'];
+const fieldIds = ['projectName','projectStatus','linkedCustomer','clientName','phone','email','address','qrClientName','qrPhone','qrEmail','qrProjectType','qrStartDate','qrBudget','qrDescription','estimateNumber','estimateDate','squareFootage','pricePerSqFt','markupActual','depositPercent','scopeNotes','invoiceNumber','invoiceDate','changeOrdersTotal','depositReceived','progressPayments','invoiceNotes','actualLabourCost','extraLabourCost','materialCostActual','equipmentCostActual','travelCostActual','otherJobCostActual'];
+const $ = id => document.getElementById(id);
+const currency = n => new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD'}).format(Number.isFinite(n)?n:0);
+const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+const STORAGE_KEY = 'jt_full_features_layout_v1';
+let db = { projects:[], customers:[], materials:[], employees:[], payrollEntries:[] };
+let currentProjectId = null;
+let calendarYear = new Date().getFullYear();
+let calendarMonth = new Date().getMonth();
+
+function saveDB(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+function loadDB(){
+  try { db = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"projects":[],"customers":[],"materials":[],"employees":[],"payrollEntries":[]}'); } catch(e){ db = { projects:[], customers:[], materials:[], employees:[], payrollEntries:[] }; }
+  ['projects','customers','materials','employees','payrollEntries'].forEach(k => { if(!Array.isArray(db[k])) db[k]=[]; });
+  if(!db.projects.length){ const p=blankProject(); db.projects.push(p); currentProjectId=p.id; saveDB(); } else currentProjectId=db.projects[0].id;
+}
+function blankProject(){
+  const fields = {}; fieldIds.forEach(id => fields[id]='');
+  fields.projectName='New Project'; fields.projectStatus='Quote'; fields.depositPercent='10';
+  return { id:'p_'+Date.now(), fields, receipts:[], vehicles:[], photos:[], schedule:[] };
+}
+function getProject(){ return db.projects.find(p => p.id === currentProjectId); }
+function setMsg(id,msg){ const el=$(id); if(el) el.textContent=msg; }
+
+function initTabs(){
+  const wrap = $('tabs'); wrap.innerHTML = '';
+  const names = {dashboard:'Dashboard',projects:'Projects',customers:'Customers',materials:'Materials',schedule:'Schedule',quote:'Quote',estimate:'Estimate',invoice:'Invoice',jobcost:'Job Cost',receipts:'Receipts',vehicles:'Vehicles',photos:'Photos',payroll:'Payroll',reports:'Reports'};
+  tabs.forEach(tab => {
+    const b=document.createElement('button');
+    b.className='tab-btn'+(tab==='dashboard'?' active':'');
+    b.textContent=names[tab];
+    b.addEventListener('click',()=>showTab(tab));
+    wrap.appendChild(b);
+  });
+}
+function showTab(tab){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', tabs[i]===tab));
+  $(tab).classList.add('active');
+  if(tab==='schedule') renderCalendar();
+}
+function syncProject(){ const p=getProject(); fieldIds.forEach(id => { const el=$(id); if(el) p.fields[id]=el.value; }); saveDB(); }
+function applyProject(){
+  const p=getProject();
+  fieldIds.forEach(id => { const el=$(id); if(el) el.value = p.fields[id] || ''; });
+  renderProjects(); renderCustomers(); refreshCustomerSelectors(); renderMaterials(); refreshMaterialSelectors(); renderSchedule(); renderCalendar(); renderReceipts(); renderVehicles(); renderPhotos(); renderEmployees(); renderPayroll(); updateAll();
+}
+function updateAll(){
+  const m = estimateMetrics();
+  $('quoteClientOut').textContent = $('qrClientName').value || '-';
+  $('quoteTypeOut').textContent = $('qrProjectType').value || '-';
+  $('quoteBudgetOut').textContent = $('qrBudget').value || '-';
+  $('quoteDateOut').textContent = $('qrStartDate').value || '-';
+  $('estSubtotal').textContent = currency(m.subtotal);
+  $('estHst').textContent = currency(m.hst);
+  $('estTotal').textContent = currency(m.total);
+  $('estDeposit').textContent = currency(m.deposit);
+  $('invEstimate').textContent = currency(m.total);
+  $('invAdjusted').textContent = currency(m.adjusted);
+  $('invPayments').textContent = currency(m.payments);
+  $('invBalance').textContent = currency(m.balance);
+  $('costLabour').textContent = currency(m.labour);
+  $('costTotal').textContent = currency(m.cost);
+  $('costSqFt').textContent = currency(m.costSqFt);
+  $('costProfit').textContent = currency(m.profit);
+  $('snapProject').textContent = $('projectName').value || 'New Project';
+  $('snapStatus').textContent = $('projectStatus').value || 'Quote';
+  $('snapEstimate').textContent = currency(m.total);
+  $('snapCost').textContent = currency(m.cost);
+  $('snapProfit').textContent = currency(m.profit);
+  $('dashProjects').textContent = String(db.projects.length);
+  $('dashCustomers').textContent = String(db.customers.length);
+  $('dashMaterials').textContent = String(db.materials.length);
+  $('dashReceipts').textContent = currency(db.projects.flatMap(p=>p.receipts||[]).reduce((s,r)=>s+num(r.total),0));
+  $('dashKm').textContent = db.projects.flatMap(p=>p.vehicles||[]).reduce((s,v)=>s+num(v.km),0).toFixed(1);
+  $('dashPayroll').textContent = String(db.payrollEntries.length);
+  calcAnalytics();
+}
+function estimateMetrics(){
+  const subtotal = num($('squareFootage').value)*num($('pricePerSqFt').value)+num($('markupActual').value);
+  const hst=subtotal*0.13,total=subtotal+hst,deposit=total*(num($('depositPercent').value)/100);
+  const adjusted=total+num($('changeOrdersTotal').value),payments=num($('depositReceived').value)+num($('progressPayments').value),balance=adjusted-payments;
+  const labour=num($('actualLabourCost').value)+num($('extraLabourCost').value),cost=labour+num($('materialCostActual').value)+num($('equipmentCostActual').value)+num($('travelCostActual').value)+num($('otherJobCostActual').value);
+  const profit=adjusted-cost,costSqFt=num($('squareFootage').value)>0?cost/num($('squareFootage').value):0;
+  return {subtotal,hst,total,deposit,adjusted,payments,balance,labour,cost,profit,costSqFt};
+}
+
+// Projects
+function renderProjects(){
+  const list=$('projectList'); list.innerHTML='';
+  db.projects.forEach(p=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML=`<div class="row"><div><strong>${p.fields.projectName||'Untitled'}</strong><div class="small">${p.fields.clientName||''}</div></div><div class="btnbar"><button class="secondary" data-open="${p.id}">Open</button></div></div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-open]').forEach(btn=>btn.addEventListener('click',()=>{ syncProject(); currentProjectId=btn.dataset.open; applyProject(); setMsg('projectMsg','Project loaded.'); }));
+}
+
+// Customers
+function refreshCustomerSelectors(){
+  const sel=$('linkedCustomer'); sel.innerHTML='<option value="">Select customer</option>';
+  db.customers.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.id; opt.textContent=c.name; sel.appendChild(opt); });
+}
+function renderCustomers(){
+  const list=$('customerList'); list.innerHTML='';
+  if(!db.customers.length){ list.innerHTML='<div class="item small">No customers saved.</div>'; return; }
+  db.customers.forEach(c=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML=`<div class="row"><div><strong>${c.name}</strong><div class="small">${c.phone||''} · ${c.email||''}</div><div class="small">${c.address||''}</div></div><div class="btnbar"><button class="secondary" data-use="${c.id}">Use</button><button class="danger" data-del="${c.id}">Delete</button></div></div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-use]').forEach(btn=>btn.addEventListener('click',()=>useCustomer(btn.dataset.use)));
+  list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>{ db.customers=db.customers.filter(c=>c.id!==btn.dataset.del); saveDB(); renderCustomers(); refreshCustomerSelectors(); setMsg('customerMsg','Customer deleted.'); }));
+}
+function useCustomer(id){
+  const c=db.customers.find(x=>x.id===id); if(!c) return;
+  $('linkedCustomer').value=id; $('clientName').value=c.name||''; $('phone').value=c.phone||''; $('email').value=c.email||''; $('address').value=c.address||'';
+  $('qrClientName').value=c.name||''; $('qrPhone').value=c.phone||''; $('qrEmail').value=c.email||'';
+  syncProject(); updateAll();
+}
+
+// Materials
+function refreshMaterialSelectors(){
+  const sel=$('projectMaterialSelect'); sel.innerHTML='<option value="">Select material</option>';
+  db.materials.forEach(m=>{ const opt=document.createElement('option'); opt.value=m.id; opt.textContent=`${m.name} (${currency(num(m.price))}/${m.unit||'unit'})`; sel.appendChild(opt); });
+}
+function renderMaterials(){
+  const list=$('materialList'); list.innerHTML='';
+  if(!db.materials.length){ list.innerHTML='<div class="item small">No materials saved.</div>'; return; }
+  db.materials.forEach(m=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML=`<div class="row"><div><strong>${m.name}</strong><div class="small">${currency(num(m.price))} / ${m.unit||'unit'}</div></div><button class="danger" data-del="${m.id}">Delete</button></div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>{ db.materials=db.materials.filter(m=>m.id!==btn.dataset.del); saveDB(); renderMaterials(); refreshMaterialSelectors(); setMsg('materialMsg','Material deleted.'); }));
+}
+
+// Schedule
+function renderSchedule(){
+  const list=$('scheduleList'); list.innerHTML='';
+  const items=(getProject().schedule||[]).slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  if(!items.length){ list.innerHTML='<div class="item small">No schedule items yet.</div>'; return; }
+  items.forEach(item=>{
+    const googleUrl=buildGoogleCalendarUrl(item);
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML=`<div><strong>${item.title||'Event'}</strong><div class="small">${item.date||''} ${item.time||''}</div><div class="small">${item.notes||''}</div></div><div class="btnbar"><a class="linkbtn secondary" target="_blank" rel="noopener" href="${googleUrl}">Google Calendar</a></div>`;
+    list.appendChild(div);
+  });
+}
+function renderCalendar(){
+  const grid=$('calendarGrid'); grid.innerHTML='';
+  const label=$('calendarMonthLabel'), monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  label.textContent=monthNames[calendarMonth]+' '+calendarYear;
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d=>grid.innerHTML += `<div class="cal-dow">${d}</div>`);
+  const events=getProject().schedule||[], first=new Date(calendarYear,calendarMonth,1), startDay=first.getDay(), daysInMonth=new Date(calendarYear,calendarMonth+1,0).getDate(), prevDays=new Date(calendarYear,calendarMonth,0).getDate(), today=new Date();
+  for(let i=0;i<startDay;i++){ const dayNum=prevDays-startDay+i+1; grid.innerHTML += `<div class="cal-day muted"><div class="cal-num">${dayNum}</div></div>`; }
+  for(let day=1;day<=daysInMonth;day++){
+    const dateStr=`${calendarYear}-${String(calendarMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayEvents=events.filter(e=>e.date===dateStr);
+    const isToday=today.getFullYear()===calendarYear&&today.getMonth()===calendarMonth&&today.getDate()===day;
+    const cls=`cal-day ${isToday?'today':''} ${dayEvents.length?'has-event':''}`;
+    const dot=dayEvents.length?`<div class="cal-dot">${dayEvents[0].title||'Event'}${dayEvents.length>1?` +${dayEvents.length-1}`:''}</div>`:'';
+    grid.innerHTML += `<div class="${cls}"><div class="cal-num">${day}</div>${dot}</div>`;
+  }
+  const totalCells=startDay+daysInMonth, tail=(7-(totalCells%7))%7;
+  for(let i=1;i<=tail;i++) grid.innerHTML += `<div class="cal-day muted"><div class="cal-num">${i}</div></div>`;
+}
+function buildGoogleCalendarUrl(item){
+  const startDate=item.date?item.date.replace(/-/g,''):'';
+  const time=item.time?item.time.replace(':',''):'0900';
+  const start=startDate+'T'+time+'00';
+  const endHour=item.time?String(Math.min(parseInt(item.time.split(':')[0],10)+1,23)).padStart(2,'0'):'10';
+  const end=startDate+'T'+endHour+(item.time?item.time.split(':')[1]:'00')+'00';
+  const params=new URLSearchParams({action:'TEMPLATE',text:item.title||'Schedule Item',dates:start+'/'+end,details:item.notes||''});
+  return 'https://calendar.google.com/calendar/render?'+params.toString();
+}
+function downloadScheduleICS(){
+  const items=getProject().schedule||[];
+  if(!items.length){ setMsg('scheduleMsg','No schedule items to export.'); return; }
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//JT Contractor App//EN'];
+  items.forEach(item=>{
+    const dt=item.date?item.date.replace(/-/g,''):'', tm=item.time?item.time.replace(':','')+'00':'090000', start=dt+'T'+tm;
+    lines.push('BEGIN:VEVENT'); lines.push('UID:'+item.id+'@jt-contractor'); lines.push('DTSTAMP:'+start); lines.push('DTSTART:'+start); lines.push('SUMMARY:'+String(item.title||'Schedule Item').replace(/,/g,'\\,')); if(item.notes) lines.push('DESCRIPTION:'+String(item.notes).replace(/,/g,'\\,').replace(/\n/g,' ')); lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  const blob=new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=((getProject().fields.projectName||'project')+'_schedule.ics').replace(/[^a-z0-9_\-.]+/gi,'_'); a.click(); URL.revokeObjectURL(url); setMsg('scheduleMsg','Calendar file downloaded.');
+}
+
+// Media
+async function toDataUrl(file,maxSize=1400,quality=0.82){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>maxSize||h>maxSize){ const scale=Math.min(maxSize/w,maxSize/h); w=Math.round(w*scale); h=Math.round(h*scale); }
+        const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); resolve(c.toDataURL('image/jpeg',quality));
+      };
+      img.onerror=reject; img.src=reader.result;
+    };
+    reader.onerror=reject; reader.readAsDataURL(file);
+  });
+}
+
+// Receipts
+async function addReceipt(){
+  const p=getProject(); let image=''; const file=$('receiptFiles').files[0]; if(file) image=await toDataUrl(file).catch(()=> '');
+  p.receipts.push({id:'r_'+Date.now(),image,store:$('receiptStore').value,date:$('receiptDate').value,items:$('receiptItems').value,category:$('receiptCategory').value,total:$('receiptTotal').value,note:$('receiptNote').value});
+  saveDB(); renderReceipts();
+  ['receiptFiles','receiptStore','receiptDate','receiptItems','receiptCategory','receiptTotal','receiptNote'].forEach(id=>{ if($(id).type==='file') $(id).value=''; else $(id).value=''; });
+  setMsg('receiptMsg','Receipt added.');
+}
+function renderReceipts(){
+  const list=$('receiptList'); list.innerHTML='';
+  const receipts=getProject().receipts||[]; $('receiptTotalOut').textContent=currency(receipts.reduce((s,r)=>s+num(r.total),0));
+  if(!receipts.length){ list.innerHTML='<div class="item small">No receipts yet.</div>'; return; }
+  receipts.slice().reverse().forEach(r=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML=`${r.image?`<img src="${r.image}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid #333;margin-bottom:8px">`:''}<strong>${r.items||'Receipt'}</strong><div class="small">${r.store||''} · ${r.date||''}</div><div class="small">${r.category||''} · ${currency(num(r.total))}</div>`;
+    list.appendChild(div);
+  });
+}
+
+// Vehicles
+function addVehicle(){
+  const start=num($('vehicleStartKm').value), end=num($('vehicleEndKm').value);
+  if(end<start){ setMsg('vehicleMsg','End odometer must be greater than start.'); return; }
+  getProject().vehicles.push({id:'v_'+Date.now(),vehicle:$('vehicleName').value,date:$('vehicleDate').value,driver:$('vehicleDriver').value,startKm:start,endKm:end,km:end-start,purpose:$('vehiclePurpose').value});
+  saveDB(); renderVehicles(); ['vehicleName','vehicleDate','vehicleDriver','vehicleStartKm','vehicleEndKm','vehiclePurpose'].forEach(id=>$(id).value=''); setMsg('vehicleMsg','KM entry added.');
+}
+function renderVehicles(){
+  const list=$('vehicleList'); list.innerHTML=''; const trips=getProject().vehicles||[]; $('kmTotalOut').textContent=trips.reduce((s,t)=>s+num(t.km),0).toFixed(1);
+  if(!trips.length){ list.innerHTML='<div class="item small">No KM entries yet.</div>'; return; }
+  trips.slice().reverse().forEach(t=>{ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="row"><div><strong>${t.vehicle||''}</strong><div class="small">${t.date||''} · ${t.driver||''}</div><div class="small">${t.purpose||''}</div></div><div class="amount">${num(t.km).toFixed(1)} km</div></div>`; list.appendChild(div); });
+}
+
+// Photos
+async function addPhotos(){
+  const p=getProject(), files=Array.from($('photoFiles').files||[]);
+  for(const file of files){ const src=await toDataUrl(file).catch(()=> ''); p.photos.push({id:'ph_'+Date.now()+Math.random(),src,caption:$('photoCaption').value,name:file.name,date:new Date().toLocaleString()}); }
+  saveDB(); renderPhotos(); $('photoFiles').value=''; $('photoCaption').value=''; setMsg('photoMsg','Photos added.');
+}
+function renderPhotos(){
+  const list=$('photoList'); list.innerHTML=''; const photos=getProject().photos||[];
+  if(!photos.length){ list.innerHTML='<div class="item small">No photos yet.</div>'; return; }
+  photos.slice().reverse().forEach(p=>{ const div=document.createElement('div'); div.className='item'; div.innerHTML=`<img src="${p.src}" alt=""><div class="small">${p.name||''}</div><div class="small">${p.caption||''}</div>`; list.appendChild(div); });
+}
+
+// Payroll
+function renderEmployees(){
+  const list=$('employeeList'); list.innerHTML=''; const sel=$('entryEmployee'); sel.innerHTML='';
+  if(!db.employees.length) list.innerHTML='<div class="item small">No employees saved.</div>';
+  db.employees.forEach(e=>{
+    const item=document.createElement('div'); item.className='item'; item.innerHTML=`<div class="row"><div><strong>${e.name}</strong><div class="small">${e.role||''} · ${currency(num(e.rate))}/hr</div></div></div>`; list.appendChild(item);
+    const opt=document.createElement('option'); opt.value=e.id; opt.textContent=e.name; sel.appendChild(opt);
+  });
+  if(db.employees.length && !$('entryRate').value) $('entryRate').value=db.employees[0].rate||'';
+}
+function renderPayroll(){
+  const list=$('payrollList'); list.innerHTML=''; const proj=$('projectName').value||'', entries=db.payrollEntries.filter(e=>e.projectName===proj);
+  $('payHoursOut').textContent=entries.reduce((s,e)=>s+num(e.hours),0).toFixed(2); $('payGrossOut').textContent=currency(entries.reduce((s,e)=>s+num(e.hours)*num(e.rate),0));
+  if(!entries.length){ list.innerHTML='<div class="item small">No payroll entries yet.</div>'; return; }
+  entries.slice().reverse().forEach(e=>{ const emp=db.employees.find(x=>x.id===e.employeeId)||{name:'Employee'}; const div=document.createElement('div'); div.className='item'; div.innerHTML=`<div class="row"><div><strong>${emp.name}</strong><div class="small">${e.date||''} · ${num(e.hours).toFixed(2)} hr @ ${currency(num(e.rate))}</div><div class="small">${e.note||''}</div></div><div class="amount">${currency(num(e.hours)*num(e.rate))}</div></div>`; list.appendChild(div); });
+}
+function addEmployee(){
+  const name=$('empName').value.trim(); if(!name){ setMsg('payrollMsg','Add employee name.'); return; }
+  db.employees.push({id:'e_'+Date.now(),name,rate:$('empRate').value,role:$('empRole').value}); saveDB(); renderEmployees(); $('empName').value=''; $('empRate').value=''; $('empRole').value=''; setMsg('payrollMsg','Employee added.');
+}
+function addPayroll(){
+  const proj=$('projectName').value||''; db.payrollEntries.push({id:'pe_'+Date.now(),employeeId:$('entryEmployee').value,projectName:proj,date:$('entryDate').value,hours:$('entryHours').value,rate:$('entryRate').value,note:$('entryNote').value}); saveDB(); renderPayroll(); $('entryDate').value=''; $('entryHours').value=''; $('entryNote').value=''; setMsg('payrollMsg','Payroll entry added.');
+}
+
+// Reports
+function reportHtml(internal){
+  const m=estimateMetrics(), p=getProject();
+  const photos=(p.photos||[]).slice(0,6).map(ph=>`<div style="margin-top:14px"><img src="${ph.src}" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;border:1px solid #ddd"><div style="font-size:12px;color:#666;margin-top:4px">${ph.caption||''}</div></div>`).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Report</title><style>body{font-family:Arial,Helvetica,sans-serif;background:#f4f1ea;margin:0}.sheet{max-width:900px;margin:auto;background:#fff;padding:28px}.head{text-align:center;border-bottom:3px solid #d4a64a;padding-bottom:14px;margin-bottom:20px}.logo{width:110px;height:110px;border-radius:50%;display:block;margin:0 auto 8px}.card{border:1px solid #ddd;border-radius:12px;padding:14px;margin-top:14px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}.row:last-child{border-bottom:none}.actions{position:sticky;top:0;background:#f4f1ea;padding:12px;text-align:center}button{padding:12px 16px;border:none;border-radius:12px;background:#d4a64a;font-weight:800}@media print{.actions{display:none}}
+.fin-grid{display:grid;gap:14px;grid-template-columns:repeat(3,1fr);margin-top:14px}
+.fin-card{border:1px solid #2b2b2b;background:var(--panel);border-radius:18px;padding:14px 16px}
+.fin-title{font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.06em}
+.fin-value{font-size:26px;font-weight:900;margin-top:6px;color:var(--gold)}
+.fin-sub{font-size:12px;color:var(--muted);margin-top:6px}
+.rank-list{display:grid;gap:10px;margin-top:14px}
+.rank-item{border:1px solid #2b2b2b;background:var(--panel);border-radius:16px;padding:12px 14px}
+.rank-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+@media (max-width:1200px){.fin-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:800px){.fin-grid{grid-template-columns:1fr}}
+
+</style></head><body><div class="actions"><button onclick="window.print()">Print / Save as PDF</button></div><div class="sheet"><div class="head"><img class="logo" src="x"><div style="font-size:28px;font-weight:800">Josh Thomson Renovation Specialist</div><div>(250) 575-3692</div></div><div class="card"><div class="row"><span>Project</span><strong>${p.fields.projectName||''}</strong></div><div class="row"><span>Client</span><strong>${p.fields.clientName||''}</strong></div><div class="row"><span>Estimate Total</span><strong>${currency(m.total)}</strong></div><div class="row"><span>Balance</span><strong>${currency(m.balance)}</strong></div></div><div class="card"><strong>Scope / Notes</strong><div style="margin-top:10px;white-space:pre-wrap">${p.fields.scopeNotes||''}</div></div>${photos?`<div class="card"><strong>Photos</strong>${photos}</div>`:''}${internal?`<div class="card"><div class="row"><span>Total Job Cost</span><strong>${currency(m.cost)}</strong></div><div class="row"><span>Gross Profit</span><strong>${currency(m.profit)}</strong></div><div class="row"><span>Cost / Sq Ft</span><strong>${currency(m.costSqFt)}</strong></div></div>`:''}</div></body></html>`.replace('x','x');
+}
+function openReport(internal){ const w=window.open('','_blank'); if(!w) return alert('Popup blocked.'); w.document.open(); w.document.write(reportHtml(internal).replace('x','x')); w.document.close(); }
+
+// Backup
+function exportBackup(){
+  syncProject();
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='jt_contractor_backup.json'; a.click(); URL.revokeObjectURL(url); setMsg('backupMsg','Backup exported.');
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const imported=JSON.parse(reader.result);
+      ['projects','customers','materials','employees','payrollEntries'].forEach(k=>{ if(!Array.isArray(imported[k])) throw new Error('bad'); });
+      db=imported; if(!db.projects.length){ const p=blankProject(); db.projects=[p]; currentProjectId=p.id; } else currentProjectId=db.projects[0].id;
+      saveDB(); applyProject(); setMsg('backupMsg','Backup imported.');
+    }catch(e){ setMsg('backupMsg','Import failed.'); }
+  };
+  reader.readAsText(file);
+}
+
+
+function calcAnalytics(){
+  const now = new Date();
+  const thisMonth = now.getFullYear() + '-' + (now.getMonth()+1);
+  const last = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const lastMonth = last.getFullYear() + '-' + (last.getMonth()+1);
+
+  let receiptThis=0, receiptLast=0;
+  const categoryTotals = {};
+  (db.projects || []).forEach(p => {
+    (p.receipts || []).forEach(r => {
+      const d = new Date(r.date || '');
+      if(!isNaN(d)){
+        const key = d.getFullYear() + '-' + (d.getMonth()+1);
+        if(key===thisMonth) receiptThis += num(r.total);
+        if(key===lastMonth) receiptLast += num(r.total);
+      }
+      const cat = (r.category || 'Uncategorized').trim();
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + num(r.total);
+    });
+  });
+
+  let kmThis=0, kmLast=0;
+  const vehicleTotals = {};
+  (db.projects || []).forEach(p => {
+    (p.vehicles || []).forEach(t => {
+      const d = new Date(t.date || '');
+      if(!isNaN(d)){
+        const key = d.getFullYear() + '-' + (d.getMonth()+1);
+        if(key===thisMonth) kmThis += num(t.km);
+        if(key===lastMonth) kmLast += num(t.km);
+      }
+      const vehicle = (t.vehicle || 'Unspecified').trim();
+      vehicleTotals[vehicle] = (vehicleTotals[vehicle] || 0) + num(t.km);
+    });
+  });
+
+  $('receiptMonthTotal').textContent = currency(receiptThis);
+  $('receiptLastMonthTotal').textContent = currency(receiptLast);
+  $('kmMonthTotal').textContent = kmThis.toFixed(1);
+  $('kmLastMonthTotal').textContent = kmLast.toFixed(1);
+  $('fuelEstimate').textContent = currency(kmThis * 0.22);
+
+  const categoryEntries = Object.entries(categoryTotals).sort((a,b)=>b[1]-a[1]);
+  if(categoryEntries.length){
+    $('topCategoryName').textContent = categoryEntries[0][0];
+    $('topCategoryValue').textContent = currency(categoryEntries[0][1]);
+  } else {
+    $('topCategoryName').textContent = 'No category data yet';
+    $('topCategoryValue').textContent = currency(0);
+  }
+
+  const vehicleEntries = Object.entries(vehicleTotals).sort((a,b)=>b[1]-a[1]);
+  if(vehicleEntries.length){
+    $('topVehicleName').textContent = vehicleEntries[0][0];
+    $('topVehicleValue').textContent = vehicleEntries[0][1].toFixed(1) + ' km';
+  } else {
+    $('topVehicleName').textContent = 'No vehicle data yet';
+    $('topVehicleValue').textContent = '0.0 km';
+  }
+
+  const projectStats = (db.projects || []).map(p => {
+    const f = p.fields || {};
+    const sqft = num(f.squareFootage);
+    const subtotal = sqft * num(f.pricePerSqFt) + num(f.markupActual);
+    const total = subtotal + (subtotal * 0.13);
+    const adjusted = total + num(f.changeOrdersTotal);
+    const labour = num(f.actualLabourCost) + num(f.extraLabourCost);
+    const cost = labour + num(f.materialCostActual) + num(f.equipmentCostActual) + num(f.travelCostActual) + num(f.otherJobCostActual);
+    const profit = adjusted - cost;
+    const margin = adjusted > 0 ? (profit / adjusted) * 100 : null;
+    const costSqFt = sqft > 0 ? cost / sqft : null;
+    return { name: f.projectName || 'Untitled Project', revenue: adjusted, profit, margin, costSqFt };
+  });
+
+  const withMargins = projectStats.filter(p => p.margin !== null && isFinite(p.margin));
+  const withRevenue = projectStats.filter(p => p.revenue > 0);
+  const withCostSqFt = projectStats.filter(p => p.costSqFt !== null && isFinite(p.costSqFt));
+
+  if(withMargins.length){
+    const best = [...withMargins].sort((a,b)=>b.margin-a.margin)[0];
+    const worst = [...withMargins].sort((a,b)=>a.margin-b.margin)[0];
+    $('bestProjectMargin').textContent = best.margin.toFixed(1) + '%';
+    $('bestProjectName').textContent = best.name;
+    $('worstProjectMargin').textContent = worst.margin.toFixed(1) + '%';
+    $('worstProjectName').textContent = worst.name;
+  } else {
+    $('bestProjectMargin').textContent = '-';
+    $('bestProjectName').textContent = 'No data yet';
+    $('worstProjectMargin').textContent = '-';
+    $('worstProjectName').textContent = 'No data yet';
+  }
+
+  if(withRevenue.length){
+    const avgRevenue = withRevenue.reduce((s,p)=>s+p.revenue,0) / withRevenue.length;
+    $('avgRevenueProject').textContent = currency(avgRevenue);
+    const topProfit = [...withRevenue].sort((a,b)=>b.profit-a.profit)[0];
+    $('topProfitName').textContent = topProfit.name;
+    $('topProfitValue').textContent = currency(topProfit.profit);
+  } else {
+    $('avgRevenueProject').textContent = currency(0);
+    $('topProfitName').textContent = 'No data yet';
+    $('topProfitValue').textContent = '-';
+  }
+
+  if(withCostSqFt.length){
+    const avgCostSqFt = withCostSqFt.reduce((s,p)=>s+p.costSqFt,0) / withCostSqFt.length;
+    $('avgCostSqFt').textContent = currency(avgCostSqFt);
+  } else {
+    $('avgCostSqFt').textContent = currency(0);
+  }
+
+  const current = estimateMetrics();
+  $('pmRevenue').textContent = currency(current.adjusted);
+  $('pmCostSqFt').textContent = currency(current.costSqFt);
+  $('pmProfit').textContent = currency(current.profit);
+  $('pmMargin').textContent = (current.adjusted > 0 ? ((current.profit/current.adjusted)*100).toFixed(1) : '0.0') + '%';
+}
+
+function wireEvents(){
+  $('newProjectBtn').addEventListener('click',()=>{ syncProject(); const p=blankProject(); db.projects.unshift(p); currentProjectId=p.id; saveDB(); applyProject(); setMsg('projectMsg','New project created.'); });
+  $('saveProjectBtn').addEventListener('click',()=>{ syncProject(); setMsg('projectMsg','Project saved.'); renderProjects(); updateAll(); });
+  $('duplicateProjectBtn').addEventListener('click',()=>{ syncProject(); const cp=JSON.parse(JSON.stringify(getProject())); cp.id='p_'+Date.now(); cp.fields.projectName=(cp.fields.projectName||'Project')+' Copy'; db.projects.unshift(cp); currentProjectId=cp.id; saveDB(); applyProject(); setMsg('projectMsg','Project duplicated.'); });
+  $('deleteProjectBtn').addEventListener('click',()=>{ if(db.projects.length<=1) return setMsg('projectMsg','At least one project must remain.'); db.projects=db.projects.filter(p=>p.id!==currentProjectId); currentProjectId=db.projects[0].id; saveDB(); applyProject(); setMsg('projectMsg','Project deleted.'); });
+  fieldIds.forEach(id=>$(id).addEventListener('input',()=>{ updateAll(); syncProject(); }));
+  $('linkedCustomer').addEventListener('change',()=>{ if($('linkedCustomer').value) useCustomer($('linkedCustomer').value); else syncProject(); });
+
+  $('addCustomerBtn').addEventListener('click',()=>{ const name=$('custName').value.trim(); if(!name) return setMsg('customerMsg','Add customer name.'); db.customers.push({id:'c_'+Date.now(),name,phone:$('custPhone').value,email:$('custEmail').value,address:$('custAddress').value,notes:$('custNotes').value}); saveDB(); renderCustomers(); refreshCustomerSelectors(); ['custName','custPhone','custEmail','custAddress','custNotes'].forEach(id=>$(id).value=''); setMsg('customerMsg','Customer saved.'); });
+
+  $('addMaterialBtn').addEventListener('click',()=>{ const name=$('materialName').value.trim(); if(!name) return setMsg('materialMsg','Add material name.'); db.materials.push({id:'m_'+Date.now(),name,unit:$('materialUnit').value,price:$('materialPrice').value}); saveDB(); renderMaterials(); refreshMaterialSelectors(); ['materialName','materialUnit','materialPrice'].forEach(id=>$(id).value=''); setMsg('materialMsg','Material saved.'); });
+  $('calcMaterialBtn').addEventListener('click',()=>{ const m=db.materials.find(x=>x.id===$('projectMaterialSelect').value); if(!m) return setMsg('materialMsg','Select a material.'); $('projectMaterialCost').value=(num(m.price)*num($('projectMaterialQty').value)).toFixed(2); });
+  $('applyMaterialBtn').addEventListener('click',()=>{ $('materialCostActual').value=(num($('materialCostActual').value)+num($('projectMaterialCost').value)).toFixed(2); updateAll(); syncProject(); setMsg('materialMsg','Material cost added to job cost.'); });
+
+  $('addScheduleBtn').addEventListener('click',addScheduleItem);
+  $('clearScheduleBtn').addEventListener('click',()=>{ getProject().schedule=[]; saveDB(); renderSchedule(); renderCalendar(); setMsg('scheduleMsg','Schedule cleared.'); });
+  $('exportScheduleBtn').addEventListener('click',downloadScheduleICS);
+  $('prevMonthBtn').addEventListener('click',()=>{ calendarMonth--; if(calendarMonth<0){calendarMonth=11; calendarYear--;} renderCalendar(); });
+  $('nextMonthBtn').addEventListener('click',()=>{ calendarMonth++; if(calendarMonth>11){calendarMonth=0; calendarYear++;} renderCalendar(); });
+
+  $('copyQuoteBtn').addEventListener('click',()=>{ $('clientName').value=$('qrClientName').value; $('phone').value=$('qrPhone').value; $('email').value=$('qrEmail').value; $('projectName').value=$('qrClientName').value||$('projectName').value; $('scopeNotes').value=$('qrDescription').value; updateAll(); syncProject(); });
+
+  $('addReceiptBtn').addEventListener('click',addReceipt);
+  $('applyReceiptBtn').addEventListener('click',()=>{ $('materialCostActual').value=(num($('materialCostActual').value)+num($('receiptTotal').value)).toFixed(2); updateAll(); syncProject(); setMsg('receiptMsg','Receipt cost added to material cost.'); });
+  $('clearReceiptsBtn').addEventListener('click',()=>{ getProject().receipts=[]; saveDB(); renderReceipts(); setMsg('receiptMsg','Receipts cleared.'); });
+
+  $('addVehicleBtn').addEventListener('click',addVehicle);
+  $('clearVehicleBtn').addEventListener('click',()=>{ getProject().vehicles=[]; saveDB(); renderVehicles(); setMsg('vehicleMsg','KM log cleared.'); });
+
+  $('addPhotoBtn').addEventListener('click',addPhotos);
+  $('clearPhotosBtn').addEventListener('click',()=>{ getProject().photos=[]; saveDB(); renderPhotos(); setMsg('photoMsg','Photos cleared.'); });
+
+  $('addEmployeeBtn').addEventListener('click',addEmployee);
+  $('entryEmployee').addEventListener('change',()=>{ const emp=db.employees.find(e=>e.id===$('entryEmployee').value); if(emp) $('entryRate').value=emp.rate||''; });
+  $('addPayrollBtn').addEventListener('click',addPayroll);
+  $('clearPayrollBtn').addEventListener('click',()=>{ const proj=$('projectName').value||''; db.payrollEntries=db.payrollEntries.filter(e=>e.projectName!==proj); saveDB(); renderPayroll(); setMsg('payrollMsg','Payroll cleared for this project.'); });
+
+  $('openClientReportBtn').addEventListener('click',()=>openReport(false));
+  $('openInternalReportBtn').addEventListener('click',()=>openReport(true));
+  $('exportBackupBtn').addEventListener('click',exportBackup);
+  $('importBackupInput').addEventListener('change',e=>{ const file=e.target.files[0]; if(file) importBackup(file); });
+}
+loadDB(); initTabs(); wireEvents(); applyProject();
+</script>
+</body>
+</html>
